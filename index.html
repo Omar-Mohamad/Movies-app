@@ -19,7 +19,7 @@
   <body>
     <nav class="nav-container">
       <div class="logo-container">
-        <a href="#home">
+        <a href="index.html">
           <svg
             id="logo"
             width="180"
@@ -86,12 +86,13 @@
         </a>
       </div>
 
+      <form id="search-form">
+        <input type="text" placeholder="Search" class="search" />
+        <button class="search-btn" type="submit">Search</button>
+      </form>
+
       <ul class="links-container">
-        <li><a href="#home">Home</a></li>
-        <li><a href="search.html">Search</a></li>
-        <li><a href="#nowplaying">Now playing</a></li>
-        <li><a href="#toprated">Top rated</a></li>
-        <li><a href="#upcomming">Up comming</a></li>
+        <li><a href="index.html">Home</a></li>
       </ul>
     </nav>
 
@@ -107,7 +108,7 @@
 
     <div class="content-container">
       <div class="nowplaying-container">
-        <h1 class="section-title">NowPlaying</h1>
+        <h1 class="section-title">Now Playing</h1>
         <div id="nowplaying" class="movies-container"></div>
       </div>
 
@@ -120,6 +121,11 @@
         <h1 class="section-title">Up comming</h1>
         <div id="upcomming" class="movies-container"></div>
       </div>
+    </div>
+
+    <div class="search-container">
+      <h1 class="search-info"></h1>
+      <div class="results-container"></div>
     </div>
 
     <!-- Javascript -->
