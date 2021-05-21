@@ -1,0 +1,201 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Montserrat";
+}
+
+.nav-container {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: white;
+  padding: 5px 0;
+  z-index: 100;
+}
+
+/*
+==============
+Logo animation
+==============
+*/
+
+#logo {
+  animation: fill 0.5s ease forwards 3.5s;
+}
+
+#logo path:nth-child(1) {
+  animation: line-ani 2s ease forwards;
+}
+#logo path:nth-child(2) {
+  animation: line-ani 2s ease forwards 0.3s;
+}
+#logo path:nth-child(3) {
+  animation: line-ani 2s ease forwards 0.6s;
+}
+#logo path:nth-child(4) {
+  animation: line-ani 2s ease forwards 0.9s;
+}
+#logo path:nth-child(5) {
+  animation: line-ani 2s ease forwards 1.2s;
+}
+#logo path:nth-child(6) {
+  animation: line-ani 2s ease forwards 1.5s;
+}
+#logo path:nth-child(7) {
+  animation: line-ani 2s ease forwards 1.8s;
+}
+#logo path:nth-child(8) {
+  animation: line-ani 2s ease forwards 2.1s;
+}
+#logo path:nth-child(9) {
+  animation: line-ani 2s ease forwards 2.4s;
+}
+
+/*
+=========
+Nav links
+=========
+*/
+
+.links-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  list-style: none;
+}
+
+.links-container > li > a {
+  text-decoration: none;
+  font-size: 1.2rem;
+  color: black;
+  margin-right: 15px;
+}
+
+/*
+======
+Banner
+======
+*/
+
+.banner-container {
+  position: relative;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  height: 90vh;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.movie-info {
+  position: absolute;
+  bottom: 8px;
+  left: 16px;
+  color: white;
+  width: 80%;
+  padding: 1rem;
+}
+
+.movie-title {
+  font-size: 3rem;
+  font-weight: bold;
+  padding-bottom: 1rem;
+}
+
+.movie-discription {
+  font-size: 1.3rem;
+}
+
+/*
+======
+movies
+======
+*/
+
+.content-container {
+  background-color: black;
+}
+
+.section-title {
+  padding: 20px 0;
+  padding-left: 20px;
+  color: white;
+}
+
+.movies-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  padding: 1rem;
+}
+
+.movie {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: fit-content;
+  margin-right: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: transform 0.3s ease-in-out;
+}
+
+.movie:hover {
+  transform: scale(1.1);
+}
+
+.movie-poster {
+  object-fit: contain;
+  width: 250px;
+}
+
+.title {
+  font-weight: bold;
+  text-align: center;
+  padding: 5px;
+}
+
+.title,
+.rating {
+  color: white;
+}
+
+/*
+=========== 
+Animations
+==========
+*/
+
+@keyframes line-ani {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes fill {
+  from {
+    fill: transparent;
+  }
+  to {
+    fill: black;
+  }
+}
