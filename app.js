@@ -2,55 +2,26 @@
 
 const logo = document.querySelectorAll("#logo path");
 
-logo.forEach(function (letter) {
+logo.forEach((letter) => {
   letter.style.strokeDasharray = letter.getTotalLength();
   letter.style.strokeDashoffset = letter.getTotalLength();
 });
 
-// Selecting elements
-
-const form = document.querySelector("#search-form"),
-  searchField = document.querySelector(".search"),
-  searchBtn = document.querySelector(".search-btn"),
-  toprated = document.querySelector("#top"),
-  upcomming = document.querySelector("#upcomming"),
-  bannerContainer = document.querySelector(".banner-container"),
-  randomMovieTitle = document.querySelector(".movie-title"),
-  randomMovieDiscription = document.querySelector(".movie-discription"),
-  nowPlayingMoviesContainer = document.querySelector("#nowplaying"),
-  topRatedMoviesContainer = document.querySelector("#toprated"),
-  upCommingMoviesContainer = document.querySelector("#upcomming");
-
-const contentContainer = document.querySelector(".content-container");
-
-const searchValue = document.querySelector(".search-info");
-
-const resultsContainer = document.querySelector(".results-container");
-
-// API data
-const topRatedUrl =
-    "https://api.themoviedb.org/3/movie/top_rated?api_key=ec002527d6c6ee4ad05b7a57a673a4c6",
-  upcommingUrl =
-    "https://api.themoviedb.org/3/movie/upcoming?api_key=ec002527d6c6ee4ad05b7a57a673a4c6",
-  popularUrl =
-    "https://api.themoviedb.org/3/movie/popular?api_key=ec002527d6c6ee4ad05b7a57a673a4c6",
-  nowPlayingUrl =
-    "https://api.themoviedb.org/3/movie/now_playing?api_key=ec002527d6c6ee4ad05b7a57a673a4c6";
-
-const searchUrl =
-  "https://api.themoviedb.org/3/search/movie?api_key=ec002527d6c6ee4ad05b7a57a673a4c6&query=";
-
 // Getting the Now playing movies
+
+const loadMovies = () => {
+  loadNowPlaying();
+  loadPopular();
+  loadTopRated();
+  loadUpcomming();
+};
 
 window.addEventListener("load", loadMovies);
 
-function loadMovies() {
-  loadNowPlaying();
-  loadTopRated();
-  loadUpcomming();
-}
+const getNowPlaying = async () => {
+  const nowPlayingUrl =
+    "https://api.themoviedb.org/3/movie/now_playing?api_key=ec002527d6c6ee4ad05b7a57a673a4c6";
 
-async function getNowPlaying() {
   const nowPlaynigResponse = await fetch(nowPlayingUrl);
 
   if (nowPlaynigResponse.status !== 200) {
@@ -60,13 +31,16 @@ async function getNowPlaying() {
   const nowPlaynigMovies = nowPlaynigResponse.json();
 
   return nowPlaynigMovies;
-}
+};
 
-function loadNowPlaying() {
+const loadNowPlaying = () => {
   getNowPlaying()
-    .then(function (data) {
-      const randomMovie =
-        data.results[Math.floor(Math.random() * data.results.length)];
+    .then((movies) => {
+      const bannerContainer = document.querySelector(".banner-container"),
+        randomMovieTitle = document.querySelector(".movie-title"),
+        randomMovieDiscription = document.querySelector(".movie-discription"),
+        randomMovie =
+          movies.results[Math.floor(Math.random() * movies.results.length)];
 
       bannerContainer.style.backgroundImage = `url(https://image.tmdb.org/t/p/w500${randomMovie.backdrop_path})`;
 
@@ -74,30 +48,33 @@ function loadNowPlaying() {
 
       randomMovieDiscription.textContent = randomMovie.overview;
 
-      for (let i = 0; i < data.results.length; i++) {
+      const nowPlayingMoviesContainer = document.querySelector("#nowplaying");
+
+      for (const movie of movies.results) {
         const movieContainer = document.createElement("div"),
           moviePoster = document.createElement("img"),
           movieTitle = document.createElement("h3"),
           movieRating = document.createElement("P");
 
+        movieContainer.setAttribute("id", movie.id);
         movieContainer.setAttribute("class", "movie");
         moviePoster.setAttribute("class", "movie-poster");
         moviePoster.setAttribute(
           "src",
-          "https://image.tmdb.org/t/p/w500" + data.results[i].poster_path
+          "https://image.tmdb.org/t/p/w500" + movie.poster_path
         );
         movieTitle.setAttribute("class", "title");
         movieRating.setAttribute("class", "rating");
 
-        if (data.results[i].title.length > 17) {
-          movieTitle.textContent = data.results[i].title.slice(0, 17) + "...";
+        if (movie.original_title.length > 17) {
+          movieTitle.textContent = movie.original_title.slice(0, 17) + "...";
 
-          movieTitle.setAttribute("title", data.results[i].title);
+          movieTitle.setAttribute("title", movie.original_title);
         } else {
-          movieTitle.textContent = data.results[i].title;
+          movieTitle.textContent = movie.original_title;
         }
 
-        movieRating.textContent = data.results[i].vote_average + "/10";
+        movieRating.textContent = movie.vote_average + "/10";
 
         movieContainer.appendChild(moviePoster);
         movieContainer.appendChild(movieTitle);
@@ -106,12 +83,73 @@ function loadNowPlaying() {
         nowPlayingMoviesContainer.appendChild(movieContainer);
       }
     })
-    .catch(function (error) {
+    .catch((error) => {
       console.log("Rejected:", error.message);
     });
-}
+};
 
-async function getTopRated() {
+const getPopular = async () => {
+  const popularUrl =
+    "https://api.themoviedb.org/3/movie/popular?api_key=ec002527d6c6ee4ad05b7a57a673a4c6";
+
+  const popularResponse = await fetch(popularUrl);
+
+  if (popularResponse.status !== 200) {
+    throw new Error("Failed to get popular movies");
+  }
+
+  const popularMovies = popularResponse.json();
+
+  return popularMovies;
+};
+
+const loadPopular = () => {
+  getPopular()
+    .then((movies) => {
+      const popularMoviesContainer = document.querySelector("#popular");
+
+      for (const movie of movies.results) {
+        const movieContainer = document.createElement("div"),
+          moviePoster = document.createElement("img"),
+          movieTitle = document.createElement("h3"),
+          movieRating = document.createElement("P");
+
+        movieContainer.setAttribute("id", movie.id);
+        movieContainer.setAttribute("class", "movie");
+        moviePoster.setAttribute("class", "movie-poster");
+        moviePoster.setAttribute(
+          "src",
+          "https://image.tmdb.org/t/p/w500" + movie.poster_path
+        );
+        movieTitle.setAttribute("class", "title");
+        movieRating.setAttribute("class", "rating");
+
+        if (movie.original_title.length > 17) {
+          movieTitle.textContent = movie.original_title.slice(0, 17) + "...";
+
+          movieTitle.setAttribute("title", movie.original_title);
+        } else {
+          movieTitle.textContent = movie.original_title;
+        }
+
+        movieRating.textContent = movie.vote_average + "/10";
+
+        movieContainer.appendChild(moviePoster);
+        movieContainer.appendChild(movieTitle);
+        movieContainer.appendChild(movieRating);
+
+        popularMoviesContainer.appendChild(movieContainer);
+      }
+    })
+    .catch((error) => {
+      console.log("rejected:", error.message);
+    });
+};
+
+const getTopRated = async () => {
+  const topRatedUrl =
+    "https://api.themoviedb.org/3/movie/top_rated?api_key=ec002527d6c6ee4ad05b7a57a673a4c6";
+
   const topRatedResponse = await fetch(topRatedUrl);
 
   if (topRatedResponse.status !== 200) {
@@ -121,39 +159,38 @@ async function getTopRated() {
   const topRatedMovies = topRatedResponse.json();
 
   return topRatedMovies;
-}
+};
 
-function loadTopRated() {
+const loadTopRated = () => {
   getTopRated()
-    .then(function (data) {
-      for (let i = 0; i < data.results.length; i++) {
+    .then(function (movies) {
+      const topRatedMoviesContainer = document.querySelector("#toprated");
+
+      for (const movie of movies.results) {
         const movieContainer = document.createElement("div"),
           moviePoster = document.createElement("img"),
           movieTitle = document.createElement("h3"),
           movieRating = document.createElement("P");
 
+        movieContainer.setAttribute("id", movie.id);
         movieContainer.setAttribute("class", "movie");
-
         moviePoster.setAttribute("class", "movie-poster");
-
         moviePoster.setAttribute(
           "src",
-          "https://image.tmdb.org/t/p/w500" + data.results[i].poster_path
+          "https://image.tmdb.org/t/p/w500" + movie.poster_path
         );
-
         movieTitle.setAttribute("class", "title");
-
         movieRating.setAttribute("class", "rating");
 
-        if (data.results[i].title.length > 17) {
-          movieTitle.textContent = data.results[i].title.slice(0, 17) + "...";
+        if (movie.original_title.length > 17) {
+          movieTitle.textContent = movie.original_title.slice(0, 17) + "...";
 
-          movieTitle.setAttribute("title", data.results[i].title);
+          movieTitle.setAttribute("title", movie.original_title);
         } else {
-          movieTitle.textContent = data.results[i].title;
+          movieTitle.textContent = movie.original_title;
         }
 
-        movieRating.textContent = data.results[i].vote_average + "/10";
+        movieRating.textContent = movie.vote_average + "/10";
 
         movieContainer.appendChild(moviePoster);
         movieContainer.appendChild(movieTitle);
@@ -165,9 +202,12 @@ function loadTopRated() {
     .catch(function (error) {
       console.log("Rejected:", error.message);
     });
-}
+};
 
-async function getUpcomming() {
+const getUpcomming = async () => {
+  const upcommingUrl =
+    "https://api.themoviedb.org/3/movie/upcoming?api_key=ec002527d6c6ee4ad05b7a57a673a4c6";
+
   const upcommingResponse = await fetch(upcommingUrl);
 
   if (upcommingResponse.status !== 200) {
@@ -177,35 +217,38 @@ async function getUpcomming() {
   const upcommingMovies = upcommingResponse.json();
 
   return upcommingMovies;
-}
+};
 
-function loadUpcomming() {
+const loadUpcomming = () => {
   getUpcomming()
-    .then(function (data) {
-      for (let i = 0; i < data.results.length; i++) {
+    .then(function (movies) {
+      const upCommingMoviesContainer = document.querySelector("#upcomming");
+
+      for (const movie of movies.results) {
         const movieContainer = document.createElement("div"),
           moviePoster = document.createElement("img"),
           movieTitle = document.createElement("h3"),
           movieRating = document.createElement("P");
 
+        movieContainer.setAttribute("id", movie.id);
         movieContainer.setAttribute("class", "movie");
         moviePoster.setAttribute("class", "movie-poster");
         moviePoster.setAttribute(
           "src",
-          "https://image.tmdb.org/t/p/w500" + data.results[i].poster_path
+          "https://image.tmdb.org/t/p/w500" + movie.poster_path
         );
         movieTitle.setAttribute("class", "title");
         movieRating.setAttribute("class", "rating");
 
-        if (data.results[i].title.length > 17) {
-          movieTitle.textContent = data.results[i].title.slice(0, 17) + "...";
+        if (movie.original_title.length > 17) {
+          movieTitle.textContent = movie.original_title.slice(0, 17) + "...";
 
-          movieTitle.setAttribute("title", data.results[i].title);
+          movieTitle.setAttribute("title", movie.original_title);
         } else {
-          movieTitle.textContent = data.results[i].title;
+          movieTitle.textContent = movie.original_title;
         }
 
-        movieRating.textContent = data.results[i].vote_average + "/10";
+        movieRating.textContent = movie.vote_average + "/10";
 
         movieContainer.appendChild(moviePoster);
         movieContainer.appendChild(movieTitle);
@@ -217,11 +260,21 @@ function loadUpcomming() {
     .catch(function (error) {
       console.log("Rejected:", error.message);
     });
-}
+};
+
+// search
+
+const form = document.querySelector("#search-form"),
+  searchValue = document.querySelector(".search-info"),
+  searchField = document.querySelector(".search"),
+  resultsContainer = document.querySelector(".results-container");
 
 form.addEventListener("submit", changePath);
 
-async function searchMovie() {
+const searchMovie = async () => {
+  const searchUrl =
+    "https://api.themoviedb.org/3/search/movie?api_key=ec002527d6c6ee4ad05b7a57a673a4c6&query=";
+
   const searchedMovieResponse = await fetch(searchUrl + searchField.value);
 
   if (searchedMovieResponse.status !== 200) {
@@ -234,7 +287,7 @@ async function searchMovie() {
   const searchedMovie = searchedMovieResponse.json();
 
   return searchedMovie;
-}
+};
 
 function changePath(e) {
   e.preventDefault();
@@ -244,10 +297,10 @@ function changePath(e) {
   clearContent();
 
   searchMovie()
-    .then(function (data) {
+    .then(function (movies) {
       searchValue.textContent = "Results for : " + searchField.value;
 
-      for (let i = 0; i < data.results.length; i++) {
+      for (const movie of movies.results) {
         const movieContainer = document.createElement("div"),
           moviePoster = document.createElement("img"),
           movieTitle = document.createElement("h3"),
@@ -256,10 +309,10 @@ function changePath(e) {
         movieContainer.setAttribute("class", "searched-movie");
         moviePoster.setAttribute("class", "movie-poster");
 
-        if (data.results[i].poster_path) {
+        if (movie.poster_path) {
           moviePoster.setAttribute(
             "src",
-            "https://image.tmdb.org/t/p/w500" + data.results[i].poster_path
+            "https://image.tmdb.org/t/p/w500" + movie.poster_path
           );
         } else {
           movieContainer.style.display = "none";
@@ -268,15 +321,15 @@ function changePath(e) {
         movieTitle.setAttribute("class", "title");
         movieRating.setAttribute("class", "rating");
 
-        if (data.results[i].title.length > 17) {
-          movieTitle.textContent = data.results[i].title.slice(0, 17) + "...";
+        if (movie.title.length > 17) {
+          movieTitle.textContent = movie.title.slice(0, 17) + "...";
 
-          movieTitle.setAttribute("title", data.results[i].title);
+          movieTitle.setAttribute("title", movie.title);
         } else {
-          movieTitle.textContent = data.results[i].title;
+          movieTitle.textContent = movie.title;
         }
 
-        movieRating.textContent = data.results[i].vote_average + "/10";
+        movieRating.textContent = movie.vote_average + "/10";
 
         movieContainer.appendChild(moviePoster);
         movieContainer.appendChild(movieTitle);
@@ -284,21 +337,24 @@ function changePath(e) {
 
         resultsContainer.appendChild(movieContainer);
       }
-      console.log(data);
+
+      console.log(movies);
     })
     .catch(function (error) {
       console.log("Rejected:", error.message);
     });
 }
 
-function clearHomeContent() {
-  bannerContainer.style.display = "none";
+const clearHomeContent = () => {
+  const contentContainer = document.querySelector(".content-container");
 
-  contentContainer.style.display = "none";
-}
+  const children = Array.from(contentContainer.children);
 
-function clearContent() {
+  children.forEach((child) => child.remove());
+};
+
+const clearContent = () => {
   while (resultsContainer.hasChildNodes()) {
     resultsContainer.lastElementChild.remove();
   }
-}
+};
