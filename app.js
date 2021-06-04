@@ -163,7 +163,7 @@ const getTopRated = async () => {
 
 const loadTopRated = () => {
   getTopRated()
-    .then(function (movies) {
+    .then((movies) => {
       const topRatedMoviesContainer = document.querySelector("#toprated");
 
       for (const movie of movies.results) {
@@ -199,7 +199,7 @@ const loadTopRated = () => {
         topRatedMoviesContainer.appendChild(movieContainer);
       }
     })
-    .catch(function (error) {
+    .catch((error) => {
       console.log("Rejected:", error.message);
     });
 };
@@ -221,7 +221,7 @@ const getUpcomming = async () => {
 
 const loadUpcomming = () => {
   getUpcomming()
-    .then(function (movies) {
+    .then((movies) => {
       const upCommingMoviesContainer = document.querySelector("#upcomming");
 
       for (const movie of movies.results) {
@@ -257,7 +257,7 @@ const loadUpcomming = () => {
         upCommingMoviesContainer.appendChild(movieContainer);
       }
     })
-    .catch(function (error) {
+    .catch((error) => {
       console.log("Rejected:", error.message);
     });
 };
@@ -297,7 +297,7 @@ function changePath(e) {
   clearContent();
 
   searchMovie()
-    .then(function (movies) {
+    .then((movies) => {
       searchValue.textContent = "Results for : " + searchField.value;
 
       for (const movie of movies.results) {
@@ -340,7 +340,7 @@ function changePath(e) {
 
       console.log(movies);
     })
-    .catch(function (error) {
+    .catch((error) => {
       console.log("Rejected:", error.message);
     });
 }
