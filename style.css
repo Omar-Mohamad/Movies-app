@@ -79,31 +79,6 @@ form {
   background-position: right center;
 }
 
-/* 
-
-.search {
-  width: 100%;
-  padding: 10px;
-}
-
-
-
-.search-btn {
-  cursor: pointer;
-  font-size: 1.2rem;
-  background-color: white;
-  padding: 5px;
-  color: black;
-  outline: none;
-  border: 1px solid black;
-  transition: all 0.3s ease-in-out;
-}
-
-.search-btn:hover {
-  background-color: black;
-  color: white;
-} */
-
 /*
 =========
 Nav links
@@ -154,13 +129,6 @@ Banner
 
 .movie-discription {
   font-size: 1.2rem;
-}
-
-@media screen and (min-width: 1440px) {
-  .my-carousel-img {
-    object-fit: contain;
-    height: 90vh;
-  }
 }
 
 /*
@@ -302,5 +270,16 @@ Animations
 @media screen and (max-width: 500px) {
   .links-container {
     display: none;
+  }
+
+  .scroll-icon {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 1440px) {
+  .my-carousel-img {
+    object-fit: contain;
+    height: 90vh;
   }
 }
