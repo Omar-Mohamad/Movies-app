@@ -9,7 +9,12 @@ logo.forEach((letter) => {
 
 // Getting the Now playing movies
 
+/* .scroll-icon-left
+.scroll-icon-right
+ */
+
 const loadMovies = () => {
+  scrollMoviesRow();
   loadNowPlaying();
   loadPopular();
   loadTopRated();
@@ -17,6 +22,90 @@ const loadMovies = () => {
 };
 
 window.addEventListener("load", loadMovies);
+
+// Row scrolling function
+
+const scrollMoviesRow = () => {
+  const moviesRow = Array.from(document.querySelectorAll(".movies-container")),
+    rightIcons = Array.from(document.querySelectorAll(".scroll-icon-right")),
+    leftIcons = Array.from(document.querySelectorAll(".scroll-icon-left"));
+
+  rightIcons.forEach((icon) => {
+    icon.addEventListener("click", () => {
+      const targetMoviesRow = moviesRow.filter(
+        (movieRow) =>
+          movieRow.getAttribute("data-set-id") ===
+          icon.getAttribute("data-set-id")
+      );
+
+      targetMoviesRow[0].scrollBy({
+        left: 250,
+        behavior: "smooth",
+      });
+    });
+  });
+
+  leftIcons.forEach((icon) => {
+    icon.addEventListener("click", () => {
+      const targetMoviesRow = moviesRow.filter(
+        (movieRow) =>
+          movieRow.getAttribute("data-set-id") ===
+          icon.getAttribute("data-set-id")
+      );
+
+      targetMoviesRow[0].scrollBy({
+        left: -250,
+        behavior: "smooth",
+      });
+    });
+  });
+};
+
+// Render function
+
+const createElements = (data, container) => {
+  for (const movie of data.results) {
+    const movieContainer = document.createElement("div"),
+      moviePoster = document.createElement("img"),
+      movieTitle = document.createElement("h3"),
+      movieRating = document.createElement("P");
+
+    movieContainer.setAttribute("id", movie.id);
+    movieContainer.setAttribute("class", "movie");
+
+    if (movie.poster_path) {
+      moviePoster.setAttribute("class", "movie-poster");
+      moviePoster.setAttribute(
+        "src",
+        "https://image.tmdb.org/t/p/w500" + movie.poster_path
+      );
+      moviePoster.setAttribute("alt", `${movie.title} image`);
+    } else {
+      movieContainer.style.display = "none";
+    }
+
+    movieTitle.setAttribute("class", "title");
+    movieRating.setAttribute("class", "rating");
+
+    if (movie.title.length > 17) {
+      movieTitle.textContent = movie.title.slice(0, 17) + "...";
+
+      movieTitle.setAttribute("title", movie.title);
+    } else {
+      movieTitle.textContent = movie.title;
+    }
+
+    movieRating.textContent = movie.vote_average + "/10";
+
+    movieContainer.appendChild(moviePoster);
+    movieContainer.appendChild(movieTitle);
+    movieContainer.appendChild(movieRating);
+
+    container.appendChild(movieContainer);
+  }
+};
+
+// Fetching functions
 
 const getNowPlaying = async () => {
   const nowPlayingUrl =
@@ -36,52 +125,58 @@ const getNowPlaying = async () => {
 const loadNowPlaying = () => {
   getNowPlaying()
     .then((movies) => {
-      const bannerContainer = document.querySelector(".banner-container"),
-        randomMovieTitle = document.querySelector(".movie-title"),
-        randomMovieDiscription = document.querySelector(".movie-discription"),
-        randomMovie =
-          movies.results[Math.floor(Math.random() * movies.results.length)];
+      const carouselInner = document.querySelector(".carousel-inner");
 
-      bannerContainer.style.backgroundImage = `url(https://image.tmdb.org/t/p/w500${randomMovie.backdrop_path})`;
+      for (const movie of movies.results) {
+        const carouselItem = document.createElement("div"),
+          carouselImage = document.createElement("img"),
+          carouselCaptionContainer = document.createElement("div"),
+          carouselMovieTitle = document.createElement("h2"),
+          carouselMoviedescription = document.createElement("p");
 
-      randomMovieTitle.textContent = randomMovie.title;
+        if (movie.backdrop_path) {
+          carouselImage.setAttribute(
+            "src",
+            `https://image.tmdb.org/t/p/w500${movie.backdrop_path}`
+          );
+          carouselImage.setAttribute("alt", `${movie.title} image`);
 
-      randomMovieDiscription.textContent = randomMovie.overview;
+          carouselMovieTitle.textContent = movie.title;
+          carouselMoviedescription.textContent = movie.overview;
+
+          carouselItem.classList.add("carousel-item");
+          carouselImage.classList.add("my-carousel-img");
+          carouselImage.classList.add("d-block");
+          carouselImage.classList.add("w-100");
+          carouselCaptionContainer.classList.add("carousel-caption");
+          carouselMovieTitle.classList.add("movie-title");
+          carouselMoviedescription.classList.add("movie-discription");
+          carouselMoviedescription.classList.add("d-none");
+          carouselMoviedescription.classList.add("d-md-block");
+
+          carouselCaptionContainer.appendChild(carouselMovieTitle);
+          carouselCaptionContainer.appendChild(carouselMoviedescription);
+
+          carouselItem.appendChild(carouselImage);
+          carouselItem.appendChild(carouselCaptionContainer);
+          carouselInner.appendChild(carouselItem);
+        }
+      }
+
+      const carouselItems = Array.from(
+        document.querySelectorAll(".carousel-item")
+      );
+      carouselItems[0].classList.add("active");
+
+      carouselItems.forEach((item) => {
+        const overlay = document.createElement("div");
+        overlay.classList.add("overlay");
+        item.prepend(overlay);
+      });
 
       const nowPlayingMoviesContainer = document.querySelector("#nowplaying");
 
-      for (const movie of movies.results) {
-        const movieContainer = document.createElement("div"),
-          moviePoster = document.createElement("img"),
-          movieTitle = document.createElement("h3"),
-          movieRating = document.createElement("P");
-
-        movieContainer.setAttribute("id", movie.id);
-        movieContainer.setAttribute("class", "movie");
-        moviePoster.setAttribute("class", "movie-poster");
-        moviePoster.setAttribute(
-          "src",
-          "https://image.tmdb.org/t/p/w500" + movie.poster_path
-        );
-        movieTitle.setAttribute("class", "title");
-        movieRating.setAttribute("class", "rating");
-
-        if (movie.original_title.length > 17) {
-          movieTitle.textContent = movie.original_title.slice(0, 17) + "...";
-
-          movieTitle.setAttribute("title", movie.original_title);
-        } else {
-          movieTitle.textContent = movie.original_title;
-        }
-
-        movieRating.textContent = movie.vote_average + "/10";
-
-        movieContainer.appendChild(moviePoster);
-        movieContainer.appendChild(movieTitle);
-        movieContainer.appendChild(movieRating);
-
-        nowPlayingMoviesContainer.appendChild(movieContainer);
-      }
+      createElements(movies, nowPlayingMoviesContainer);
     })
     .catch((error) => {
       console.log("Rejected:", error.message);
@@ -108,38 +203,7 @@ const loadPopular = () => {
     .then((movies) => {
       const popularMoviesContainer = document.querySelector("#popular");
 
-      for (const movie of movies.results) {
-        const movieContainer = document.createElement("div"),
-          moviePoster = document.createElement("img"),
-          movieTitle = document.createElement("h3"),
-          movieRating = document.createElement("P");
-
-        movieContainer.setAttribute("id", movie.id);
-        movieContainer.setAttribute("class", "movie");
-        moviePoster.setAttribute("class", "movie-poster");
-        moviePoster.setAttribute(
-          "src",
-          "https://image.tmdb.org/t/p/w500" + movie.poster_path
-        );
-        movieTitle.setAttribute("class", "title");
-        movieRating.setAttribute("class", "rating");
-
-        if (movie.original_title.length > 17) {
-          movieTitle.textContent = movie.original_title.slice(0, 17) + "...";
-
-          movieTitle.setAttribute("title", movie.original_title);
-        } else {
-          movieTitle.textContent = movie.original_title;
-        }
-
-        movieRating.textContent = movie.vote_average + "/10";
-
-        movieContainer.appendChild(moviePoster);
-        movieContainer.appendChild(movieTitle);
-        movieContainer.appendChild(movieRating);
-
-        popularMoviesContainer.appendChild(movieContainer);
-      }
+      createElements(movies, popularMoviesContainer);
     })
     .catch((error) => {
       console.log("rejected:", error.message);
@@ -166,38 +230,7 @@ const loadTopRated = () => {
     .then((movies) => {
       const topRatedMoviesContainer = document.querySelector("#toprated");
 
-      for (const movie of movies.results) {
-        const movieContainer = document.createElement("div"),
-          moviePoster = document.createElement("img"),
-          movieTitle = document.createElement("h3"),
-          movieRating = document.createElement("P");
-
-        movieContainer.setAttribute("id", movie.id);
-        movieContainer.setAttribute("class", "movie");
-        moviePoster.setAttribute("class", "movie-poster");
-        moviePoster.setAttribute(
-          "src",
-          "https://image.tmdb.org/t/p/w500" + movie.poster_path
-        );
-        movieTitle.setAttribute("class", "title");
-        movieRating.setAttribute("class", "rating");
-
-        if (movie.original_title.length > 17) {
-          movieTitle.textContent = movie.original_title.slice(0, 17) + "...";
-
-          movieTitle.setAttribute("title", movie.original_title);
-        } else {
-          movieTitle.textContent = movie.original_title;
-        }
-
-        movieRating.textContent = movie.vote_average + "/10";
-
-        movieContainer.appendChild(moviePoster);
-        movieContainer.appendChild(movieTitle);
-        movieContainer.appendChild(movieRating);
-
-        topRatedMoviesContainer.appendChild(movieContainer);
-      }
+      createElements(movies, topRatedMoviesContainer);
     })
     .catch((error) => {
       console.log("Rejected:", error.message);
@@ -224,38 +257,7 @@ const loadUpcomming = () => {
     .then((movies) => {
       const upCommingMoviesContainer = document.querySelector("#upcomming");
 
-      for (const movie of movies.results) {
-        const movieContainer = document.createElement("div"),
-          moviePoster = document.createElement("img"),
-          movieTitle = document.createElement("h3"),
-          movieRating = document.createElement("P");
-
-        movieContainer.setAttribute("id", movie.id);
-        movieContainer.setAttribute("class", "movie");
-        moviePoster.setAttribute("class", "movie-poster");
-        moviePoster.setAttribute(
-          "src",
-          "https://image.tmdb.org/t/p/w500" + movie.poster_path
-        );
-        movieTitle.setAttribute("class", "title");
-        movieRating.setAttribute("class", "rating");
-
-        if (movie.original_title.length > 17) {
-          movieTitle.textContent = movie.original_title.slice(0, 17) + "...";
-
-          movieTitle.setAttribute("title", movie.original_title);
-        } else {
-          movieTitle.textContent = movie.original_title;
-        }
-
-        movieRating.textContent = movie.vote_average + "/10";
-
-        movieContainer.appendChild(moviePoster);
-        movieContainer.appendChild(movieTitle);
-        movieContainer.appendChild(movieRating);
-
-        upCommingMoviesContainer.appendChild(movieContainer);
-      }
+      createElements(movies, upCommingMoviesContainer);
     })
     .catch((error) => {
       console.log("Rejected:", error.message);
@@ -300,43 +302,7 @@ function changePath(e) {
     .then((movies) => {
       searchValue.textContent = "Results for : " + searchField.value;
 
-      for (const movie of movies.results) {
-        const movieContainer = document.createElement("div"),
-          moviePoster = document.createElement("img"),
-          movieTitle = document.createElement("h3"),
-          movieRating = document.createElement("P");
-
-        movieContainer.setAttribute("class", "searched-movie");
-        moviePoster.setAttribute("class", "movie-poster");
-
-        if (movie.poster_path) {
-          moviePoster.setAttribute(
-            "src",
-            "https://image.tmdb.org/t/p/w500" + movie.poster_path
-          );
-        } else {
-          movieContainer.style.display = "none";
-        }
-
-        movieTitle.setAttribute("class", "title");
-        movieRating.setAttribute("class", "rating");
-
-        if (movie.title.length > 17) {
-          movieTitle.textContent = movie.title.slice(0, 17) + "...";
-
-          movieTitle.setAttribute("title", movie.title);
-        } else {
-          movieTitle.textContent = movie.title;
-        }
-
-        movieRating.textContent = movie.vote_average + "/10";
-
-        movieContainer.appendChild(moviePoster);
-        movieContainer.appendChild(movieTitle);
-        movieContainer.appendChild(movieRating);
-
-        resultsContainer.appendChild(movieContainer);
-      }
+      createElements(movies, resultsContainer);
 
       console.log(movies);
     })
