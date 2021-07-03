@@ -39,6 +39,17 @@
     <title>Movies app</title>
   </head>
   <body>
+    <div class="preloader-container">
+      <div class="d-flex align-items-center preloader">
+        <div
+          class="spinner-border ms-auto preloader-spinner"
+          role="status"
+          aria-hidden="true"
+        ></div>
+        <strong class="preloader-text">Loading...</strong>
+      </div>
+    </div>
+
     <nav class="nav-container">
       <div class="logo-container">
         <a href="index.html">
@@ -116,6 +127,7 @@
             placeholder="Search movies"
             aria-label="Recipient's username"
             aria-describedby="button-addon2"
+            required
           />
           <button
             class="btn btn-outline-primary search-btn"

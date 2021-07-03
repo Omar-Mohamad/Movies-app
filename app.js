@@ -14,6 +14,7 @@ logo.forEach((letter) => {
  */
 
 const loadMovies = () => {
+  document.querySelector(".preloader-container").style.display = "none";
   scrollMoviesRow();
   loadNowPlaying();
   loadPopular();
@@ -271,7 +272,7 @@ const form = document.querySelector("#search-form"),
   searchField = document.querySelector(".search"),
   resultsContainer = document.querySelector(".results-container");
 
-form.addEventListener("submit", changePath);
+form.addEventListener("submit", changeContent);
 
 const searchMovie = async () => {
   const searchUrl =
@@ -280,35 +281,34 @@ const searchMovie = async () => {
   const searchedMovieResponse = await fetch(searchUrl + searchField.value);
 
   if (searchedMovieResponse.status !== 200) {
-    if (searchField.value === "") {
-      alert("Please enter the movie name that you want to search for");
-    }
     throw new Error("The searched movie is not found.");
   }
 
-  const searchedMovie = searchedMovieResponse.json();
+  const searchedMovie = await searchedMovieResponse.json();
 
   return searchedMovie;
 };
 
-function changePath(e) {
+function changeContent(e) {
   e.preventDefault();
-
-  clearHomeContent();
-
-  clearContent();
 
   searchMovie()
     .then((movies) => {
-      searchValue.textContent = "Results for : " + searchField.value;
+      searchValue.textContent = `Results for : ${searchField.value}`;
+
+      document.title = `Results for : ${searchField.value}`;
 
       createElements(movies, resultsContainer);
 
-      console.log(movies);
+      // console.log(movies);
     })
     .catch((error) => {
       console.log("Rejected:", error.message);
     });
+
+  clearHomeContent();
+
+  clearContent();
 }
 
 const clearHomeContent = () => {

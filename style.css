@@ -13,6 +13,24 @@ body {
   background-color: black !important;
 }
 
+.preloader-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.preloader-text {
+  padding-left: 1rem;
+  font-size: 2.5rem;
+  color: white;
+}
+
+.spinner-border {
+  border-color: white;
+  border-right-color: transparent;
+}
+
 .nav-container {
   position: sticky;
   top: 0;
